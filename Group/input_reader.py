@@ -15,7 +15,7 @@ class InputReader:
         x_val = self.adc_x.read_u16() / 65535
         y_val = self.adc_y.read_u16() / 65535
         
-        return x_val, y_val
+        return round(x_val, 2), round(y_val, 2)
                                       
     def read_button(self):
         current_state = self.button.value()

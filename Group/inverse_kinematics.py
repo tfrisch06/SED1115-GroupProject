@@ -44,9 +44,9 @@ def map_xy_to_angles(x, y):
     shoulder_c = bilinear(x, y, S00, S10, S01, S11)
     elbow_c = bilinear(x, y, E00, E10, E01, E11)
     
-    print(shoulder_ik, elbow_ik, " | ", shoulder_c, elbow_c, " | ", x, y)
+    # print(shoulder_ik, elbow_ik, " | ", shoulder_c, elbow_c, " | ", x, y)
     
-    return shoulder_c, elbow_c 
+    return shoulder_ik, elbow_ik 
 
 def lab8_ik(x, y):
     ax = -50 

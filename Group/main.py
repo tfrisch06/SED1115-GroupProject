@@ -27,6 +27,7 @@ def main():
             
             # Compute servo angles from inverse kinematics
             shoulder_angle, elbow_angle = map_xy_to_angles(x_val, y_val)
+            # print(shoulder_angle, elbow_angle)
             
             # Move arm
             servos.move_arm(shoulder_angle, elbow_angle)
