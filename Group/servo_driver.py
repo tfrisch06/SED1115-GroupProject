@@ -1,4 +1,5 @@
 from machine import Pin, PWM
+from time import sleep
 
 SERVO_FREQ = 50
 MIN_PULSE = 500
@@ -29,5 +30,5 @@ class ServoDriver:
         self.set_angle(self.elbow, elbow_angle)
 
     def set_pen(self, down):
-        angle = 30 if down else 80
+        angle = 30 if down else 0
         self.set_angle(self.pen, angle)
