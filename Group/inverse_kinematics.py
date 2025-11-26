@@ -1,25 +1,67 @@
-import math
+from math import sqrt, sin, asin, acos, atan, degrees
 
 # (0, 0) = (153.27, 132.22)
 # (1, 0) = (77.56, 49.2)
 # (1, 1) = (29.78, 49.09)
 # (0, 1) = (33.49, 131.67)
 
-L1 = 155
-L2 = 155
+La = 155
+Lb = 155
 
 PAPER_WIDTH = 215  # 215 mm
 PAPER_HEIGHT = 279   # 295 mm
 
-SHOULDER_X = -50
-SHOULDER_Y = PAPER_HEIGHT / 2
+SHOULDER_X = 0
+SHOULDER_Y = 0
 
 SHOULDER_A = 1
 SHOULDER_B = 146
 ELBOW_A = -1.1
 ELBOW_B = 171.11
 
+theta_shoulder_offest = 0
+theta_elbow_offest = 0
+
 def inverse_kinematics(x, y):
+    # New sol
+    angle_AC = atan(y/x)
+
+    AC = sqrt( y**2 + x**2 )
+
+    angle_BAC = acos( (La**2 + AC**2 - Lb**2)/(2 * La * Lb) )
+    angle_ABC = acos( (La**2 + Lb**2 - AC**2)/(2 * La * Lb) )
+
+    theta_AB = angle_AC - angle_BAC
+
+    theta_shoulder = degrees(theta_shoulder_offest + theta_AB)
+    theta_elbow = degrees(angle_ABC - theta_elbow_offest)
+
+    return theta_shoulder, theta_shoulder
+
+    # Attempt at mirroring 
+    '''
+    A_x = SHOULDER_X
+    A_y = SHOULDER_Y
+    AC = sqrt( ((A_x - x)**2) + ((A_y - y)**2) )
+
+    if AC == 0 or AC > (La + Lb):
+        raise ValueError("Out of bounds")
+    
+    A_baseC = sqrt( (A_x - x)**2 + y**2 )
+
+    print((La**2 + AC**2 + Lb**2)/(2 * La * AC))
+    angle_BAC = acos((La**2 + AC**2 + Lb**2)/(2 * La * AC))
+    angle_ACB = asin((La * sin(angle_BAC))/(Lb))
+    angle_YAC = acos((A_y**2 + AC**2 - A_baseC**2)/(2 * A_y * AC))
+
+    alpha = degrees(angle_BAC + angle_YAC)
+    beta = degrees(angle_BAC + angle_ACB)
+
+    return alpha, beta
+    '''
+
+    # Old sol
+    '''
     cx = x * PAPER_WIDTH
     cy = y * PAPER_HEIGHT
     
@@ -51,3 +93,4 @@ def inverse_kinematics(x, y):
     elbow_servo = max(1, min(140, elbow_servo))
     
     return shoulder_servo, elbow_servo
+    '''

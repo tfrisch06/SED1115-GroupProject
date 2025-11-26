@@ -7,26 +7,68 @@ from pen_control import PenControl
 HOME_X = 0.5
 HOME_Y = 0.2
 
+# Temp
+bottom_left = (21, 46) # (0, 0)
+top_left = (70, 51) # (0, 295)
+top_right = (145, 132) # (215, 295)
+bottom_right = (32, 135) # (215, 0)
+
+corners = [bottom_left, top_left, top_right, bottom_right]
+
+PAPER_WIDTH = 215  # 215 mm
+PAPER_HEIGHT = 279   # 295 mm
+
+PAGE_BOTTOM_LEFT = (50, -(PAPER_HEIGHT/2))
+PAGE_TOP_LEFT = (50, (PAPER_HEIGHT/2))
+PAGE_BOTTOM_RIGHT = (50 + PAPER_WIDTH, -(PAPER_HEIGHT/2))
+PAGE_TOP_RIGHT = (50 + PAPER_WIDTH, (PAPER_HEIGHT/2))
+
+PAGE_ORIGIN_X = 50
+PAGE_ORIGIN_Y = -(PAPER_HEIGHT/2)
+
 def move_to_home(servos):
     shoulder_angle, elbow_angle = inverse_kinematics(HOME_X, HOME_Y)
     servos.move_arm(shoulder_angle, elbow_angle)
     sleep(1) 
+
+def test_corners(servos):
+    for corner in corners:
+        shoulder_angle, elbow_angle = corner
+        shoulder_angle, elbow_angle = abs(180 - shoulder_angle), abs(180 - elbow_angle)
+        servos.move_arm(shoulder_angle, elbow_angle)
+
+        sleep(1)
 
 def main():
     reader = InputReader()
     servos = ServoDriver()
     pen = PenControl(servos)
 
+    # print("Testing servo corners...")
+    # test_corners(servos)
+    # sleep(1)
+
+    # print("Testing (0,0)")
+    # servos.move_arm(0,0)
+    # sleep(1)
+    
     print("Starting Brachiograph control...")
 
     try:
         while True:
             # Read inputs
             x_val, y_val = reader.read_pots()
+
+            x_into_page = x_val * PAPER_WIDTH
+            y_into_page = y_val * PAPER_HEIGHT
+
+            x_pos = PAGE_ORIGIN_X + x_into_page
+            y_pos = PAGE_ORIGIN_Y + y_into_page
+
             pen_state = reader.read_button()
             
             # Compute servo angles from inverse kinematics
-            shoulder_angle, elbow_angle = inverse_kinematics(x_val, y_val)
+            shoulder_angle, elbow_angle = inverse_kinematics(x_pos, y_pos)
             
             # f1, f2 = reader.read_feedback()
             # print(shoulder_angle, elbow_angle, " | ", round(f1, 2), round(f2, 2))
