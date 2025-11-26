@@ -36,7 +36,7 @@ def inverse_kinematics(x, y):
     theta_shoulder = degrees(theta_shoulder_offest + theta_AB)
     theta_elbow = degrees(angle_ABC - theta_elbow_offest)
 
-    return theta_shoulder, theta_shoulder
+    return theta_shoulder, theta_elbow
 
     # Attempt at mirroring 
     '''
