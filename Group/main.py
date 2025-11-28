@@ -39,6 +39,12 @@ def test_corners(servos):
 
         sleep(1)
 
+def test():
+    servos = ServoDriver()
+
+    servos.move_arm(50, 160)
+    sleep(0.5)
+
 def main():
     reader = InputReader()
     servos = ServoDriver()
@@ -59,17 +65,19 @@ def main():
             # Read inputs
             x_val, y_val = reader.read_pots()
 
-            x_into_page = x_val * PAPER_WIDTH
-            y_into_page = y_val * PAPER_HEIGHT
-
-            x_pos = PAGE_ORIGIN_X + x_into_page
-            y_pos = PAGE_ORIGIN_Y + y_into_page
+            x_pos = max(0, min(PAPER_WIDTH, x_val * PAPER_WIDTH))
+            y_pos = max(0, min(PAPER_HEIGHT, y_val * PAPER_HEIGHT))
+            # print(f"x: {x_pos}, y: {y_pos}")
 
             pen_state = reader.read_button()
             
             # Compute servo angles from inverse kinematics
             shoulder_angle, elbow_angle = inverse_kinematics(x_pos, y_pos)
-            
+            # print(f"Shoulder angle: {shoulder_angle}, Elbow_angle: {elbow_angle}")
+
+            if shoulder_angle is None or elbow_angle is None:
+                continue
+
             # f1, f2 = reader.read_feedback()
             # print(shoulder_angle, elbow_angle, " | ", round(f1, 2), round(f2, 2))
             
@@ -96,3 +104,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # test()

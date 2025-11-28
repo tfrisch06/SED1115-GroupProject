@@ -1,4 +1,4 @@
-from math import sqrt, sin, asin, acos, atan, degrees
+from math import sqrt, acos, atan2, degrees
 
 # (0, 0) = (153.27, 132.22)
 # (1, 0) = (77.56, 49.2)
@@ -19,24 +19,40 @@ SHOULDER_B = 146
 ELBOW_A = -1.1
 ELBOW_B = 171.11
 
-theta_shoulder_offest = 0
-theta_elbow_offest = 0
+theta_shoulder_offest = 50
+theta_elbow_offest = 160
 
 def inverse_kinematics(x, y):
     # New sol
-    angle_AC = atan(y/x)
+    A_x = -50
+    A_y = PAPER_HEIGHT/2
 
-    AC = sqrt( y**2 + x**2 )
+    dx = x - A_x
+    dy = y - A_y
+    AC = sqrt(dx**2 + dy**2)
 
-    angle_BAC = acos( (La**2 + AC**2 - Lb**2)/(2 * La * Lb) )
-    angle_ABC = acos( (La**2 + Lb**2 - AC**2)/(2 * La * Lb) )
+    if AC > (La + Lb) or AC < abs(La - Lb):
+        print("unreachable")
+        return None, None
+    
+    try:
+        cos_BAC = ((La**2 + AC**2 - Lb**2)/(2*La*AC))
+        cos_BAC = max(-1.0, min(1.0, cos_BAC))
+        angle_BAC = acos(cos_BAC)
 
-    theta_AB = angle_AC - angle_BAC
+        cos_ACB = ((Lb**2 + AC**2 - La**2)/(2*Lb*AC))
+        cos_ACB = max(-1.0, min(1.0, cos_ACB))
+        angle_ACB = acos(cos_ACB)
+    except ValueError:
+        print("Math Error: Domain error in acos")
+        return None, None
 
-    theta_shoulder = degrees(theta_shoulder_offest + theta_AB)
-    theta_elbow = degrees(angle_ABC - theta_elbow_offest)
+    angle_YAC = atan2(dy, dx)
 
-    return theta_shoulder, theta_elbow
+    alpha = degrees(angle_YAC - angle_BAC)
+    beta = degrees(angle_BAC + angle_ACB)
+
+    return alpha, beta
 
     # Attempt at mirroring 
     '''
