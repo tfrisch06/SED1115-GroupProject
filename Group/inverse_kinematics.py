@@ -1,15 +1,10 @@
 import math
 
-# (0, 0) = (153.27, 132.22)
-# (1, 0) = (77.56, 49.2)
-# (1, 1) = (29.78, 49.09)
-# (0, 1) = (33.49, 131.67)
-
 L1 = 155
-L2 = 155
+L2 = 157
 
 PAPER_WIDTH = 215  # 215 mm
-PAPER_HEIGHT = 279   # 295 mm
+PAPER_HEIGHT = 279   # 279 mm
 
 SHOULDER_X = -50
 SHOULDER_Y = PAPER_HEIGHT / 2
@@ -20,14 +15,14 @@ ELBOW_A = -1.1
 ELBOW_B = 171.11
 
 def inverse_kinematics(x, y):
-    cx = x * PAPER_WIDTH
-    cy = y * PAPER_HEIGHT
+    cx = (1 - x) * PAPER_WIDTH
+    cy = (1 - y) * PAPER_HEIGHT
     
     dx = cx - SHOULDER_X
     dy = cy - SHOULDER_Y
     lac = math.sqrt(dx**2 + dy**2)
     
-    max_reach = 155 + 155
+    max_reach = L1 + L2
     if lac == 0 or lac > max_reach:
         raise ValueError("Outside bounds")
         
@@ -51,3 +46,19 @@ def inverse_kinematics(x, y):
     elbow_servo = max(1, min(140, elbow_servo))
     
     return shoulder_servo, elbow_servo
+
+def forward_kinematics(shoulder_servo, elbow_servo):
+    shoulder_deg = (shoulder_servo - SHOULDER_B) / SHOULDER_A
+    elbow_deg = (elbow_servo - ELBOW_B) / ELBOW_A
+
+    theta1 = math.radians(shoulder_deg)
+    theta2 = math.radians(elbow_deg)
+
+    x = L1 * math.cos(theta1) + L2 * math.cos(theta1 + theta2)
+    y = L1 * math.sin(theta1) + L2 * math.sin(theta1 + theta2)
+    
+    x_norm = 1 - ((x + SHOULDER_X) / PAPER_WIDTH)
+    y_norm = 1 - ((y + SHOULDER_Y) / PAPER_HEIGHT)
+
+    return x_norm, y_norm
+
