@@ -7,42 +7,26 @@ from pen_control import PenControl
 HOME_X = 0.5
 HOME_Y = 0.2
 
-# Temp
-bottom_left = (21, 46) # (0, 0)
-top_left = (70, 51) # (0, 295)
-top_right = (145, 132) # (215, 295)
-bottom_right = (32, 135) # (215, 0)
-
-corners = [bottom_left, top_left, top_right, bottom_right]
-
 PAPER_WIDTH = 215  # 215 mm
-PAPER_HEIGHT = 279   # 295 mm
+PAPER_HEIGHT = 295   # 295 mm
 
-PAGE_BOTTOM_LEFT = (50, -(PAPER_HEIGHT/2))
-PAGE_TOP_LEFT = (50, (PAPER_HEIGHT/2))
-PAGE_BOTTOM_RIGHT = (50 + PAPER_WIDTH, -(PAPER_HEIGHT/2))
-PAGE_TOP_RIGHT = (50 + PAPER_WIDTH, (PAPER_HEIGHT/2))
+# SHOULDER_OFFSET = 35.0
+SHOULDER_OFFSET = 128
+SHOULDER_DIRECTION = -1
 
-PAGE_ORIGIN_X = 50
-PAGE_ORIGIN_Y = -(PAPER_HEIGHT/2)
+# ELBOW_OFFSET = 170.0
+ELBOW_OFFSET = 128
+ELBOW_DIRECTION = 1
 
 def move_to_home(servos):
     shoulder_angle, elbow_angle = inverse_kinematics(HOME_X, HOME_Y)
     servos.move_arm(shoulder_angle, elbow_angle)
     sleep(1) 
 
-def test_corners(servos):
-    for corner in corners:
-        shoulder_angle, elbow_angle = corner
-        shoulder_angle, elbow_angle = abs(180 - shoulder_angle), abs(180 - elbow_angle)
-        servos.move_arm(shoulder_angle, elbow_angle)
-
-        sleep(1)
-
 def test():
     servos = ServoDriver()
 
-    servos.move_arm(50, 160)
+    servos.move_arm(180-52, 180-52)
     sleep(0.5)
 
 def main():
@@ -77,6 +61,9 @@ def main():
 
             if shoulder_angle is None or elbow_angle is None:
                 continue
+
+            shoulder_angle = (shoulder_angle * SHOULDER_DIRECTION) + SHOULDER_OFFSET
+            elbow_angle = (elbow_angle * ELBOW_DIRECTION) + ELBOW_OFFSET
 
             # f1, f2 = reader.read_feedback()
             # print(shoulder_angle, elbow_angle, " | ", round(f1, 2), round(f2, 2))
