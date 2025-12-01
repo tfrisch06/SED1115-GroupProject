@@ -42,8 +42,8 @@ def inverse_kinematics(x, y):
     shoulder_servo = SHOULDER_A * shoulder_deg + SHOULDER_B
     elbow_servo = ELBOW_A * elbow_deg + ELBOW_B
     
-    shoulder_servo = max(13, min(162, shoulder_servo))
-    elbow_servo = max(1, min(140, elbow_servo))
+    # shoulder_servo = max(13, min(162, shoulder_servo))
+    # elbow_servo = max(1, min(140, elbow_servo))
     
     return shoulder_servo, elbow_servo
 
