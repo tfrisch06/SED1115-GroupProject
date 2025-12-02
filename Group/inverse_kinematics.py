@@ -5,17 +5,17 @@ L1 = 155
 L2 = 157
 
 # 8.5 x 11 inch paper
-PAPER_WIDTH = 215  # 215 mm
+PAPER_WIDTH = 215 # 215 mm
 PAPER_HEIGHT = 279   # 279 mm
 
 # Location of the shoulder servo
 SHOULDER_X = -50
 SHOULDER_Y = PAPER_HEIGHT / 2
 
-SHOULDER_A = -0.67
-SHOULDER_B = 42
-ELBOW_A = 0.97
-ELBOW_B = 12.27
+SHOULDER_A = 1
+SHOULDER_B = 160
+ELBOW_A = -1.1
+ELBOW_B = 174
 
 def inverse_kinematics(x: float, y: float) -> tuple[float, float]:
     """
@@ -34,7 +34,7 @@ def inverse_kinematics(x: float, y: float) -> tuple[float, float]:
     """
 
     # Scale normalized input to coordinates    
-    cx = (1 - x) * PAPER_WIDTH
+    cx = (1 - x) * PAPER_WIDTH + 3
     cy = (1 - y) * PAPER_HEIGHT
     
     # Compute position relative to the shoulder

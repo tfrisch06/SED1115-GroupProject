@@ -1,6 +1,5 @@
 from machine import Pin, PWM
 
-
 SERVO_FREQ = 50 # PWM frequency
 MIN_PULSE = 500
 MAX_PULSE = 2500
@@ -58,24 +57,6 @@ class ServoDriver:
         self.set_angle(self.shoulder, shoulder_angle)
         self.set_angle(self.elbow, elbow_angle)
         
-    def move_arm_new(self, shoulder_angle: float, elbow_angle: float):
-        SMOOTH_FACTOR = 0.05
-        MAX_STEP = 2
-
-        # Shoulder EMA + clamp
-        delta_s = (shoulder_angle - self.shoulder_angle) * SMOOTH_FACTOR
-        delta_s = max(-MAX_STEP, min(MAX_STEP, delta_s))
-        self.shoulder_angle += delta_s
-
-        # Elbow EMA + clamp
-        delta_e = (elbow_angle - self.elbow_angle) * SMOOTH_FACTOR
-        delta_e = max(-MAX_STEP, min(MAX_STEP, delta_e))
-        self.elbow_angle += delta_e
-
-        # Command servos
-        self.set_angle(self.shoulder, self.shoulder_angle)
-        self.set_angle(self.elbow, self.elbow_angle)
-
     def set_pen(self, down: bool):
         angle = 30 if down else 0
         self.set_angle(self.pen, angle)
