@@ -14,7 +14,7 @@ class ServoDriver:
         for s in [self.shoulder, self.elbow, self.pen]:
             s.freq(SERVO_FREQ)
 
-    def _angle_to_duty(self, angle):
+    def angle_to_duty(self, angle):
         angle = max(0, min(180, angle))
         
         pulse = MIN_PULSE + (angle / 180) * (MAX_PULSE - MIN_PULSE)
@@ -23,7 +23,7 @@ class ServoDriver:
         return duty
 
     def set_angle(self, servo, angle):
-        servo.duty_u16(self._angle_to_duty(angle))
+        servo.duty_u16(self.angle_to_duty(angle))
 
     def move_arm(self, shoulder_angle, elbow_angle):
         self.set_angle(self.shoulder, shoulder_angle)
