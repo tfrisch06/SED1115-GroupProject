@@ -92,6 +92,21 @@ class InputReader:
         # Shift by minimum angle
         return amin + ((v - vmin) / (vmax - vmin)) * (amax - amin)
     
+    def read_voltage(self) -> tuple[float, float]:
+        """
+        Reads the voltage from the feedback channels.
+
+        Returns:
+            tuple[float, float]: Shoulder and elbow servo voltage.
+        """
+        channel_0 = self.adc.read(rate=4, channel1=0)
+        channel_1 = self.adc.read(rate=4, channel1=1)
+        
+        shoulder_v = self.adc.raw_to_v(channel_0)
+        elbow_v = self.adc.raw_to_v(channel_1)
+        
+        return shoulder_v, elbow_v
+    
     def read_feedback(self) -> tuple[float, float]:
         """
         Reader servo feedback voltages and convert them to angles
@@ -105,11 +120,7 @@ class InputReader:
             tuple[float, float]: Calculated shoulder and elbow angles in degrees
         """
         
-        channel_0 = self.adc.read(rate=4, channel1=0)
-        channel_1 = self.adc.read(rate=4, channel1=1)
-        
-        shoulder_v = self.adc.raw_to_v(channel_0)
-        elbow_v = self.adc.raw_to_v(channel_1)
+        shoulder_v, elbow_v = self.read_voltage()
 
         shoulder_angle = self.voltage_to_angle(
             c.MAX_ANGLE_SHOULDER - shoulder_v,

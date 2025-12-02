@@ -19,6 +19,16 @@ def move_to_home(servos: ServoDriver):
     shoulder_angle, elbow_angle = inverse_kinematics(HOME_X, HOME_Y)
     servos.move_arm(shoulder_angle, elbow_angle)
     sleep(1) 
+    
+def manually_measure():
+    """
+    Helper function to find max/min voltage for shoulder and elbow servo
+    """
+    reader = InputReader()
+    
+    while True:
+        s, e = reader.read_voltage()
+        print(f"S: {s:.4f}, E: {e:.4f}")
 
 def main():
     """
@@ -65,3 +75,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    manually_measure()
