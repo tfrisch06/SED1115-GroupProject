@@ -1,6 +1,5 @@
 import inverse_kinematics as ik
 
-# How many steps between 0.00 and 1.00? (e.g., 101 gives 0.00, 0.01, ..., 1.00)
 STEPS = 101
 
 for i_step in range(STEPS):
@@ -24,6 +23,5 @@ for i_step in range(STEPS):
         # error between original point and forward-kinematics result
         error = ((fx - x)**2 + (fy - y)**2) ** 0.5
 
-        # print(f"XY=({x:.2f}, {y:.2f})  IK=({s:.2f}, {e:.2f}) FK=({fx:.2f}, {fy:.2f})  error={error:.4f}")
         if error >= 0.0001:
             print(f"XY=({x:.2f}, {y:.2f})  IK=({s:.2f}, {e:.2f}) FK=({fx:.2f}, {fy:.2f}")
