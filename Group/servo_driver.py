@@ -1,5 +1,4 @@
 from machine import Pin, PWM
-from config import MIN_ANGLE_SHOULDER, MIN_ANGLE_ELBOW, MAX_ANGLE_SHOULDER, MAX_ANGLE_ELBOW
 
 
 SERVO_FREQ = 50 # PWM frequency
@@ -26,11 +25,14 @@ class ServoDriver:
         self.elbow = PWM(Pin(elbow_pin))
         self.pen = PWM(Pin(pen_pin))
         
+        self.shoulder_angle = 90
+        self.elbow_angle = 90
+        
         # Set all servos to the frequency
         for s in [self.shoulder, self.elbow, self.pen]:
             s.freq(SERVO_FREQ)
 
-    def angle_to_duty(self, angle: float, min_angle: float, max_angle: float) -> int:
+    def angle_to_duty(self, angle: float) -> int:
         """
         Converts an angle in degrees to a 16 bit PWM cycle
 
@@ -41,21 +43,40 @@ class ServoDriver:
             int: _description_
         """
         
-        angle = max(min_angle, min(max_angle, angle))
+        angle = max(0, min(180, angle))
         
-        pulse = MIN_PULSE + (min_angle / max_angle) * (MAX_PULSE - MIN_PULSE)
+        pulse = MIN_PULSE + (angle / 180) * (MAX_PULSE - MIN_PULSE)
+        
         duty = int(pulse / 20000 * 65535)
         
         return duty
 
-    def set_angle(self, servo: PWM, angle: float, min_angle: float, max_angle: float):
-        servo.duty_u16(self.angle_to_duty(angle, min_angle, max_angle))
+    def set_angle(self, servo: PWM, angle: float):
+        servo.duty_u16(self.angle_to_duty(angle))
 
     def move_arm(self, shoulder_angle: float, elbow_angle: float):
-        self.set_angle(self.shoulder, shoulder_angle, MIN_ANGLE_SHOULDER, MAX_ANGLE_SHOULDER)
-        self.set_angle(self.elbow, elbow_angle, MIN_ANGLE_ELBOW, MAX_ANGLE_ELBOW)
+        self.set_angle(self.shoulder, shoulder_angle)
+        self.set_angle(self.elbow, elbow_angle)
+        
+    def move_arm_new(self, shoulder_angle: float, elbow_angle: float):
+        SMOOTH_FACTOR = 0.05
+        MAX_STEP = 2
+
+        # Shoulder EMA + clamp
+        delta_s = (shoulder_angle - self.shoulder_angle) * SMOOTH_FACTOR
+        delta_s = max(-MAX_STEP, min(MAX_STEP, delta_s))
+        self.shoulder_angle += delta_s
+
+        # Elbow EMA + clamp
+        delta_e = (elbow_angle - self.elbow_angle) * SMOOTH_FACTOR
+        delta_e = max(-MAX_STEP, min(MAX_STEP, delta_e))
+        self.elbow_angle += delta_e
+
+        # Command servos
+        self.set_angle(self.shoulder, self.shoulder_angle)
+        self.set_angle(self.elbow, self.elbow_angle)
 
     def set_pen(self, down: bool):
         angle = 30 if down else 0
-        self.set_angle(self.pen, angle, 0, 180)
+        self.set_angle(self.pen, angle)
 

@@ -12,11 +12,10 @@ PAPER_HEIGHT = 279   # 279 mm
 SHOULDER_X = -50
 SHOULDER_Y = PAPER_HEIGHT / 2
 
-# Servo calibrations
-SHOULDER_A = 1
-SHOULDER_B = 146
-ELBOW_A = -1.1
-ELBOW_B = 171.11
+SHOULDER_A = -0.67
+SHOULDER_B = 42
+ELBOW_A = 0.97
+ELBOW_B = 12.27
 
 def inverse_kinematics(x: float, y: float) -> tuple[float, float]:
     """

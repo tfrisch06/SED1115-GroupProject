@@ -1,7 +1,16 @@
 from ads1x15 import ADS1015
 from machine import ADC, Pin, I2C
-import config as c
 import time
+
+MIN_VOLTAGE_ELBOW = 0.1960
+MAX_VOLTAGE_ELBOW = 3.2020
+MIN_ANGLE_ELBOW = 9.054546
+MAX_ANGLE_ELBOW = 152.96032 
+
+MIN_VOLTAGE_SHOULDER = 0.172
+MAX_VOLTAGE_SHOULDER = 3.1280
+MIN_ANGLE_SHOULDER = 10.69091
+MAX_ANGLE_SHOULDER = 153.97244
 
 class InputReader:
     """
@@ -123,19 +132,19 @@ class InputReader:
         shoulder_v, elbow_v = self.read_voltage()
 
         shoulder_angle = self.voltage_to_angle(
-            c.MAX_ANGLE_SHOULDER - shoulder_v,
-            c.MIN_VOLTAGE_SHOULDER,
-            c.MAX_VOLTAGE_SHOULDER,
-            c.MIN_ANGLE_SHOULDER,
-            c.MAX_ANGLE_SHOULDER
+            MAX_VOLTAGE_SHOULDER - shoulder_v,
+            MIN_VOLTAGE_SHOULDER,
+            MAX_VOLTAGE_SHOULDER,
+            MIN_ANGLE_SHOULDER,
+            MAX_ANGLE_SHOULDER
         )
 
         elbow_angle = self.voltage_to_angle(
-            c.MAX_ANGLE_ELBOW - elbow_v,
-            c.MIN_VOLTAGE_ELBOW,
-            c.MAX_VOLTAGE_ELBOW,
-            c.MIN_ANGLE_ELBOW,
-            c.MAX_ANGLE_ELBOW
+            MAX_VOLTAGE_ELBOW - elbow_v,
+            MIN_VOLTAGE_ELBOW,
+            MAX_VOLTAGE_ELBOW,
+            MIN_ANGLE_ELBOW,
+            MAX_ANGLE_ELBOW
         )
 
         return shoulder_angle, elbow_angle

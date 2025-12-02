@@ -15,7 +15,7 @@ class PenControl:
         
         self.servo_driver = servo_driver
         self.pen_down = False
-
+    
     def update(self, down_state: bool):
         """
         Updates the pen state to the desired position. Only move if the pen position is different
