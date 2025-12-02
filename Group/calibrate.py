@@ -47,7 +47,7 @@ def get_geometric_angles(x_norm, y_norm):
     deg_theta1 = math.degrees(theta1)
     deg_theta2 = math.degrees(theta2)
     
-    # Force angles to be positive (0 to 360)  
+    # Force angles to be positive (0 to 180)  
     while deg_theta1 > 180:
         deg_theta1 -= 360
     while deg_theta1 < -180:
